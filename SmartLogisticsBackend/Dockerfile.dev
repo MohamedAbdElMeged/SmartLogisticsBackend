@@ -1,13 +1,12 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0
+FROM mcr.microsoft.com/dotnet/sdk:10.0  
+WORKDIR /src  
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
+COPY ["SmartLogisticsBackend/SmartLogisticsBackend.csproj", "./"]  
+RUN dotnet restore "./SmartLogisticsBackend.csproj"
 
-WORKDIR /src
-
-COPY ["SmartLogisticsBackend/SmartLogisticsBackend.csproj", "SmartLogisticsBackend/"]
-
-RUN dotnet restore "SmartLogisticsBackend/SmartLogisticsBackend.csproj"
-
-COPY . .
-
-WORKDIR /src/SmartLogisticsBackend
-
-CMD ["dotnet", "watch", "run", "--project", "SmartLogisticsBackend.csproj", "--configuration", "Debug", "--no-launch-profile"]
+COPY . .  
+ENV ASPNETCORE_URLS=http://+:5001  
+ENV ASPNETCORE_ENVIRONMENT=Development 
+COPY ["SmartLogisticsBackend/init.sh", "/usr/bin/"]  
+RUN chmod +x /usr/bin/init.sh

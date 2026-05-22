@@ -4,6 +4,7 @@ services:
     build:
       context: .
       dockerfile: ./SmartLogisticsBackend/Dockerfile.dev
+    command: "bash init.sh"
     ports:
       - "5001:5001"
     volumes:
@@ -12,9 +13,11 @@ services:
     environment:
       DOTNET_WATCH_RESTART_ON_RUDE_EDIT: true
       DOTNET_USE_POLLING_FILE_WATCHER: 1
+      ASPNETCORE_ENVIRONMENT: Development
   
   SmartLogisticsDB:
     image: postgres:17-alpine
+    container_name: database-postgres
     ports:
       - "5432:5432"
     environment:

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SmartLogisticsBackend.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using SmartLogisticsBackend.Infrastructure.Persistence;
 namespace SmartLogisticsBackend.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260601194213_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,27 +38,19 @@ namespace SmartLogisticsBackend.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("EmailVerificationExpiresAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("EmailVerificationTokenHash")
-                        .HasColumnType("text");
-
                     b.Property<bool>("EmailVerified")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime?>("EmailVerifiedAt")
+                    b.Property<DateTime>("EmailVerifiedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("character varying(40)");
+                        .HasColumnType("text");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("character varying(40)");
+                        .HasColumnType("text");
 
                     b.Property<string>("PasswordHashed")
                         .IsRequired()
@@ -65,9 +60,6 @@ namespace SmartLogisticsBackend.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
 
                     b.ToTable("Users");
                 });
