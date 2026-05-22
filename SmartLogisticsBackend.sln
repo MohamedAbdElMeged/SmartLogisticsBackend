@@ -1,0 +1,21 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartLogisticsBackend", "SmartLogisticsBackend\SmartLogisticsBackend.csproj", "{9914B9FD-DFCD-4E52-89AD-7C1631D63B70}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{338C5E5E-1D7D-4FDE-8C1C-28E234D5DCD6}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yaml = docker-compose.yaml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9914B9FD-DFCD-4E52-89AD-7C1631D63B70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9914B9FD-DFCD-4E52-89AD-7C1631D63B70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9914B9FD-DFCD-4E52-89AD-7C1631D63B70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9914B9FD-DFCD-4E52-89AD-7C1631D63B70}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

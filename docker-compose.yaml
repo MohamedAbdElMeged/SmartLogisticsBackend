@@ -1,0 +1,7 @@
+﻿services:
+  smartlogisticsbackend:
+    image: smartlogisticsbackend
+    build:
+      context: .
+      dockerfile: SmartLogisticsBackend/Dockerfile
+

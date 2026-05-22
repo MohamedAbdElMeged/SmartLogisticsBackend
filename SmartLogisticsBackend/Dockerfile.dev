@@ -1,0 +1,13 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0
+
+WORKDIR /src
+
+COPY ["SmartLogisticsBackend/SmartLogisticsBackend.csproj", "SmartLogisticsBackend/"]
+
+RUN dotnet restore "SmartLogisticsBackend/SmartLogisticsBackend.csproj"
+
+COPY . .
+
+WORKDIR /src/SmartLogisticsBackend
+
+CMD ["dotnet", "watch", "run", "--project", "SmartLogisticsBackend.csproj", "--configuration", "Debug", "--no-launch-profile"]
