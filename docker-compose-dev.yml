@@ -5,13 +5,14 @@ services:
       context: .
       dockerfile: ./SmartLogisticsBackend/Dockerfile.dev
     ports:
-      - "5001:5001"
+      - "5001:8080"
     volumes:
       - .:/src
     working_dir: /src/SmartLogisticsBackend
     environment:
       DOTNET_WATCH_RESTART_ON_RUDE_EDIT: true
       DOTNET_USE_POLLING_FILE_WATCHER: 1
+      ASPNETCORE_ENVIRONMENT: Development
   
   SmartLogisticsDB:
     image: postgres:17-alpine
