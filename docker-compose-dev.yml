@@ -6,7 +6,7 @@ services:
       dockerfile: ./SmartLogisticsBackend/Dockerfile.dev
     command: "bash init.sh"
     ports:
-      - "5001:5001"
+      - "5001:8080"
     volumes:
       - .:/src
     working_dir: /src/SmartLogisticsBackend
