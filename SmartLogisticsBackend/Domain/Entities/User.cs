@@ -30,7 +30,7 @@ public class User : BaseEntity
         {
             FirstName = firstName,
             LastName = lastName,
-            Email = email,
+            Email = email.ToLower(),
             PasswordHashed = BCrypt.Net.BCrypt.HashPassword(password, workFactor: 12),
             EmailVerified = false,
             // EmailVerificationTokenHash = tokenHash,
@@ -65,6 +65,7 @@ public class User : BaseEntity
     public string GenerateVerificationToken()
     {
         var rawToken  = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+        
         var tokenHash = Convert.ToBase64String(
             SHA256.HashData(Encoding.UTF8.GetBytes(rawToken)));
 
