@@ -13,6 +13,7 @@ using SmartLogisticsBackend.Features.Users.ResendVerification;
 using SmartLogisticsBackend.Features.Users.VerifyUser;
 using SmartLogisticsBackend.Infrastructure.Auth;
 using SmartLogisticsBackend.Infrastructure.Email;
+using SmartLogisticsBackend.Infrastructure.Middleware;
 using SmartLogisticsBackend.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -65,6 +66,7 @@ if (app.Environment.IsDevelopment())
 }
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<AuditLogMiddleware>(); 
 app.UseHttpsRedirection();
 
 app.MapRegisterEndpoint();

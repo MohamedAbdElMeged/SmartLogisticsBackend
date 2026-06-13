@@ -22,6 +22,12 @@ public static class ResultExtensions
             ResultErrorType.NotFound  => Results.NotFound(new { error = result.Error }),
             ResultErrorType.Forbidden => Results.Forbid(),
             ResultErrorType.Invalid   => Results.UnprocessableEntity(new { error = result.Error }),
+            ResultErrorType.Unauthorized => Results.Problem(detail: result.Error,
+                statusCode: StatusCodes.Status401Unauthorized,
+                title: "Unauthorized"),
+            ResultErrorType.Locked => Results.Problem(detail: result.Error,
+                statusCode: StatusCodes.Status423Locked,
+                title: "Locked"),
             _                         => Results.Problem(result.Error)
         };
 }

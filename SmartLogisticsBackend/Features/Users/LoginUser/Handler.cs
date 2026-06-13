@@ -11,15 +11,29 @@ public class LoginUserHandler(ApplicationDbContext context,
     {
         var user = await context.Users.FirstOrDefaultAsync(u => u.Email == req.Email.ToLower(), ct);
         if (user is null)
-            return Result<LoginUserResponse>.Failure("Invalid email or password.");
+            return Result<LoginUserResponse>.Unauthorized("Invalid email or password.");
 
         if (!BCrypt.Net.BCrypt.Verify(req.Password, user.PasswordHashed))
-            return Result<LoginUserResponse>.Failure("Invalid email or password.");
-        
+        {
+            user.IncrementFailedLoginAttempts();
+            await context.SaveChangesAsync(ct);
+            return Result<LoginUserResponse>.Unauthorized("Invalid email or password.");
+        }
+
+        if (user.LockedUntil > DateTime.UtcNow)
+        {
+            return Result<LoginUserResponse>.Locked("Account is locked.");
+        }
         if (!user.EmailVerified)
+        {
+            user.IncrementFailedLoginAttempts();
+            await context.SaveChangesAsync(ct);
             return Result<LoginUserResponse>.Forbidden("Email is not verified.");
+        }
 
         var token = tokenService.GenerateToken(user.Id, user.Email);
+        user.ResetFailedLoginAttempts();
+        await context.SaveChangesAsync(ct);
         return Result<LoginUserResponse>.Success(new LoginUserResponse()
         {
             Id = user.Id,

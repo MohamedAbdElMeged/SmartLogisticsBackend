@@ -19,6 +19,8 @@ public class User : BaseEntity
     public string? EmailVerificationTokenHash { get; set; }
 
     public DateTime? EmailVerificationExpiresAt { get; set; }
+    public int FailedLoginAttempts { get; set; } = 0;
+    public DateTime? LockedUntil { get; set; }
     public string FullName => FirstName + " " + LastName;
     
     private User() { } 
@@ -73,5 +75,21 @@ public class User : BaseEntity
         EmailVerificationExpiresAt      = DateTime.UtcNow.AddHours(24);
 
         return rawToken;
+    }
+    
+    public void IncrementFailedLoginAttempts()
+    {
+        FailedLoginAttempts++;
+        if (FailedLoginAttempts >= 5)
+        {
+            LockedUntil = DateTime.UtcNow + TimeSpan.FromMinutes(15);
+            FailedLoginAttempts = 0; 
+        }
+    }
+    
+    public void ResetFailedLoginAttempts()
+    {
+        FailedLoginAttempts = 0;
+        LockedUntil = null;
     }
 }
