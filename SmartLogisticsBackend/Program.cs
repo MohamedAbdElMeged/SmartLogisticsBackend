@@ -1,3 +1,4 @@
+using System.Threading.RateLimiting;
 using FluentValidation;
 using Hangfire;
 using Hangfire.PostgreSql;
@@ -42,7 +43,26 @@ builder.Services.Configure<ResendClientOptions>(o =>
 {
     o.ApiToken = builder.Configuration["Resend:ApiToken"]!;
 });
-
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddPolicy("login", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit        = 10,
+                Window             = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit         = 0
+            }));
+    
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.StatusCode = 429;
+        await context.HttpContext.Response.WriteAsJsonAsync(
+            new { error = "Too many login attempts. Try again later." }, token);
+    };
+});
 builder.Services.AddHttpClient();
 
 builder.Services.AddTransient<IResend, ResendClient>();
@@ -68,7 +88,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<AuditLogMiddleware>(); 
 app.UseHttpsRedirection();
-
+app.UseRateLimiter(); 
 app.MapRegisterEndpoint();
 app.MapVerifyUserEndpoint();
 app.MapResendEndpoint();

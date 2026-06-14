@@ -26,8 +26,6 @@ public class LoginUserHandler(ApplicationDbContext context,
         }
         if (!user.EmailVerified)
         {
-            user.IncrementFailedLoginAttempts();
-            await context.SaveChangesAsync(ct);
             return Result<LoginUserResponse>.Forbidden("Email is not verified.");
         }
 
