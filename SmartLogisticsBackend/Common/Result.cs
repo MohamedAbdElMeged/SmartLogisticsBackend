@@ -45,6 +45,10 @@ public class Result<T> : Result
 
     public static Result<T> Forbidden(string error)
         => new(error, ResultErrorType.Forbidden);
+    public static Result<T> Unauthorized(string error)
+        => new(error, ResultErrorType.Unauthorized);
+    public static Result<T> Locked(string error)
+        => new(error, ResultErrorType.Locked);
 }
 
 public enum ResultErrorType
@@ -52,5 +56,7 @@ public enum ResultErrorType
     Conflict,
     NotFound,
     Forbidden,
-    Invalid
+    Invalid,
+    Unauthorized,
+    Locked
 }
