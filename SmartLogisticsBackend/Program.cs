@@ -16,6 +16,7 @@ using SmartLogisticsBackend.Infrastructure.Auth;
 using SmartLogisticsBackend.Infrastructure.Email;
 using SmartLogisticsBackend.Infrastructure.Middleware;
 using SmartLogisticsBackend.Infrastructure.Persistence;
+using SmartLogisticsBackend.Infrastructure.Persistence.Seeds;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -99,4 +100,22 @@ app.UseHangfireDashboard("/dashboard", new DashboardOptions
 {
     Authorization = []
 });
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+
+        var seeder = new DbSeed(context);
+        await seeder.SeedAsync();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Seed failed");
+    }
+}
+
 app.Run();

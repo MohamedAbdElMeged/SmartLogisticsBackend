@@ -15,6 +15,8 @@ public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
 
     public DbSet<User> Users { get; set; }
     public DbSet<AuditLog> AuditLogs { get; set; }
+    public DbSet<Role> Roles { get; set; }
+    public DbSet<UserRole> UserRoles { get; set; }
     public override Task<int> SaveChangesAsync(
         CancellationToken cancellationToken = default)
     {
