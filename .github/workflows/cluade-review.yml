@@ -36,17 +36,13 @@ jobs:
           fetch-depth: 0
 
       - uses: anthropics/claude-code-action@v1
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         with:
-          claude_args: |
-            --model claude-3-5-sonnet-latest
-
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          track_progress: true 
           prompt: |
-            /pr-review
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+            /pr-review ${{ github.event.pull_request.number }}
 
-          trigger_phrase: "@claude"
-          label_trigger: "claude"
-          use_sticky_comment: false
-          classify_inline_comments: true
-          include_fix_links: true
+          claude_args: |
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*)"
