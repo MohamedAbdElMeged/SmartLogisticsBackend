@@ -15,16 +15,16 @@ jobs:
         with:
           fetch-depth: 0
       - uses: anthropics/claude-code-action@v1
-          with:
-            anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-            prompt: |
-              REPO: ${{ github.repository }}
-              PR NUMBER: ${{ github.event.pull_request.number }}
-              
-              Review this pull request as a senior software engineer.
-              Focus on correctness, security, architecture, performance, maintainability,
-              and leave inline review comments when appropriate.
-            track_progress: true
-            show_full_output: true
-            claude_args: |
-              --model claude-sonnet-4-6
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            Review this pull request as a senior software engineer.
+            Focus on correctness, security, architecture, performance, maintainability,
+            and leave inline review comments when appropriate.
+          track_progress: true
+          show_full_output: true
+          claude_args: |
+            --model claude-sonnet-4-6
