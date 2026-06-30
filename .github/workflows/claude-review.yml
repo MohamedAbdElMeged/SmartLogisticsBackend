@@ -7,6 +7,7 @@ on:
 permissions:
   contents: read
   pull-requests: write
+  issues: write
   id-token: write
 
 jobs:
@@ -25,7 +26,6 @@ jobs:
           prompt: |
             Review this pull request as a senior software engineer.
             Focus on correctness, security, architecture, performance, maintainability, and leave inline review comments when appropriate.
-
           track_progress: true
           show_full_output: true
           display_report: true
