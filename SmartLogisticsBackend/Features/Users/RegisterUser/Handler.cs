@@ -23,8 +23,8 @@ public class RegisterUserHandler(
 
         if (emailTaken )
             return Result<RegisterResponse>.Conflict("Email is already registered.");
-        
-        var user = User.Create(req.FirstName, req.LastName, req.Email, req.Password);
+        var customerRole = await context.Roles.FirstAsync(r => r.Name == "customer" , ct);
+        var user = User.Create(req.FirstName, req.LastName, req.Email, req.Password, customerRole.Id);
         var rawToken = user.GenerateVerificationToken();
         await context.Users.AddAsync(user, ct);
         await context.SaveChangesAsync(ct);

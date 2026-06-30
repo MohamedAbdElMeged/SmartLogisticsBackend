@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SmartLogisticsBackend.Common.Abstractions;
@@ -14,17 +15,20 @@ public class JwtTokenService : IJwtTokenService
     public JwtTokenService(IOptions<JwtSettings> settings)
         => _settings = settings.Value;
 
-    public string GenerateToken(Guid userId, string email)
+    public string GenerateToken(Guid userId, string email, string activeRole, List<string> roles)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.SecretKey));
+        string rolesJson = JsonSerializer.Serialize(roles);
+
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, userId.ToString()),
             new(JwtRegisteredClaimNames.Email, email),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(ClaimTypes.Role, activeRole),
+            new("assigned_roles",rolesJson, JsonClaimValueTypes.JsonArray)
+            
         };
-        //To-Do Add Roles
-        // claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
 
         var token = new JwtSecurityToken(
             issuer: _settings.Issuer,

@@ -9,7 +9,8 @@ public class LoginUserHandler(ApplicationDbContext context,
 {
     public async Task<Result<LoginUserResponse>> HandleAsync(LoginUserRequest req, CancellationToken ct)
     {
-        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == req.Email.ToLower(), ct);
+        var user = await context.Users.Include(u => u.UserRoles).
+            ThenInclude(ur => ur.Role).FirstOrDefaultAsync(u => u.Email == req.Email.ToLower(), ct);
         if (user is null)
             return Result<LoginUserResponse>.Unauthorized("Invalid email or password.");
 
@@ -29,7 +30,10 @@ public class LoginUserHandler(ApplicationDbContext context,
             return Result<LoginUserResponse>.Forbidden("Email is not verified.");
         }
 
-        var token = tokenService.GenerateToken(user.Id, user.Email);
+        var rolesNames = user.GetRolesNames();
+        var activeRole = rolesNames.First();
+        var remainingRoles = rolesNames.Where(r => r != activeRole).ToList();
+        var token = tokenService.GenerateToken(user.Id, user.Email,activeRole, remainingRoles );
         user.ResetFailedLoginAttempts();
         await context.SaveChangesAsync(ct);
         return Result<LoginUserResponse>.Success(new LoginUserResponse()

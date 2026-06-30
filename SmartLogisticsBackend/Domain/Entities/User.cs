@@ -23,9 +23,13 @@ public class User : BaseEntity
     public DateTime? LockedUntil { get; set; }
     public string FullName => FirstName + " " + LastName;
     
+    private readonly List<UserRole> _userRoles = new();
+    public IReadOnlyCollection<UserRole> UserRoles => _userRoles;
+
+    public bool HasRole(Guid roleId) => _userRoles.Any(ur => ur.RoleId == roleId);
     private User() { } 
     
-    public static User Create(string firstName, string lastName, string email, string password)
+    public static User Create(string firstName, string lastName, string email, string password, Guid defaultRoleId)
     {
 
         var user =  new User()
@@ -35,10 +39,9 @@ public class User : BaseEntity
             Email = email.ToLower(),
             PasswordHashed = BCrypt.Net.BCrypt.HashPassword(password, workFactor: 12),
             EmailVerified = false,
-            // EmailVerificationTokenHash = tokenHash,
-            // EmailVerificationExpiresAt = DateTime.UtcNow.AddHours(24)
+            
         };
-
+        user.AssignRole(defaultRoleId);
         return user;
     }
     
@@ -91,5 +94,18 @@ public class User : BaseEntity
     {
         FailedLoginAttempts = 0;
         LockedUntil = null;
+    }
+    
+    public void AssignRole(Guid roleId)
+    {
+        if (_userRoles.Any(ur => ur.RoleId == roleId))
+            return;
+
+        _userRoles.Add(UserRole.Create(Id, roleId));
+    }
+
+    public List<string> GetRolesNames()
+    {
+        return _userRoles.Select(ur => ur.Role.Name).ToList();
     }
 }

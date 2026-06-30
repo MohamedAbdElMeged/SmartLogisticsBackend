@@ -9,13 +9,16 @@ using Scalar.AspNetCore;
 using SmartLogisticsBackend.Common.Abstractions;
 using SmartLogisticsBackend.Common.Services;
 using SmartLogisticsBackend.Features.Users.LoginUser;
+using SmartLogisticsBackend.Features.Users.Profile;
 using SmartLogisticsBackend.Features.Users.RegisterUser;
 using SmartLogisticsBackend.Features.Users.ResendVerification;
+using SmartLogisticsBackend.Features.Users.SwitchRole;
 using SmartLogisticsBackend.Features.Users.VerifyUser;
 using SmartLogisticsBackend.Infrastructure.Auth;
 using SmartLogisticsBackend.Infrastructure.Email;
 using SmartLogisticsBackend.Infrastructure.Middleware;
 using SmartLogisticsBackend.Infrastructure.Persistence;
+using SmartLogisticsBackend.Infrastructure.Persistence.Seeds;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,12 +74,14 @@ builder.Services.AddScoped<RegisterUserHandler>();
 builder.Services.AddScoped<VerifyUserHandler>();
 builder.Services.AddScoped<ResendVerificationHandler>();
 builder.Services.AddScoped<LoginUserHandler>();
-
+builder.Services.AddScoped<SwitchRoleHandler>();
+builder.Services.AddScoped<GetProfileHandler>();
 
 builder.Services.AddScoped<IVerificationLinkBuilder, VerificationLinkBuilder>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
 
 
 if (app.Environment.IsDevelopment())
@@ -93,10 +98,29 @@ app.MapRegisterEndpoint();
 app.MapVerifyUserEndpoint();
 app.MapResendEndpoint();
 app.MapLoginEndpoint();
-
+app.MapSwitchRoleEndpoint();
+app.MapProfileEndpoint();
 
 app.UseHangfireDashboard("/dashboard", new DashboardOptions
 {
     Authorization = []
 });
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+
+        var seeder = new DbSeed(context);
+        await seeder.SeedAsync();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Seed failed");
+    }
+}
+
 app.Run();
