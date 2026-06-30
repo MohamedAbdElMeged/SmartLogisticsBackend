@@ -9,8 +9,10 @@ using Scalar.AspNetCore;
 using SmartLogisticsBackend.Common.Abstractions;
 using SmartLogisticsBackend.Common.Services;
 using SmartLogisticsBackend.Features.Users.LoginUser;
+using SmartLogisticsBackend.Features.Users.Profile;
 using SmartLogisticsBackend.Features.Users.RegisterUser;
 using SmartLogisticsBackend.Features.Users.ResendVerification;
+using SmartLogisticsBackend.Features.Users.SwitchRole;
 using SmartLogisticsBackend.Features.Users.VerifyUser;
 using SmartLogisticsBackend.Infrastructure.Auth;
 using SmartLogisticsBackend.Infrastructure.Email;
@@ -72,7 +74,8 @@ builder.Services.AddScoped<RegisterUserHandler>();
 builder.Services.AddScoped<VerifyUserHandler>();
 builder.Services.AddScoped<ResendVerificationHandler>();
 builder.Services.AddScoped<LoginUserHandler>();
-
+builder.Services.AddScoped<SwitchRoleHandler>();
+builder.Services.AddScoped<GetProfileHandler>();
 
 builder.Services.AddScoped<IVerificationLinkBuilder, VerificationLinkBuilder>();
 var app = builder.Build();
@@ -94,7 +97,8 @@ app.MapRegisterEndpoint();
 app.MapVerifyUserEndpoint();
 app.MapResendEndpoint();
 app.MapLoginEndpoint();
-
+app.MapSwitchRoleEndpoint();
+app.MapProfileEndpoint();
 
 app.UseHangfireDashboard("/dashboard", new DashboardOptions
 {
